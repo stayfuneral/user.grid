@@ -95,7 +95,7 @@ class UserListComponent extends CBitrixComponent {
     }
 
     public function setGridPageSizes() {
-        $sizes = [10, 30, 50, 100, 'Все'];
+        $sizes = [10, 30, 50, 100];
         $result = [];
         foreach($sizes as $size) {
             $result[] = [
@@ -188,14 +188,17 @@ class UserListComponent extends CBitrixComponent {
         $result = [];
 
         foreach($users as $id => $user) {
+
             $userLink = '/company/personal/user/'.$user['id'].'/';
+            $managerLink = '/company/personal/user/'.$user['manager']['id'].'/';
+
             $result[] = [
                 'data' => [
                     'ID' => $user['id'],
                     'FULL_NAME' => print_url($userLink, $user['name']),
                     'WORK_POSITION' => $user['work_position'],
                     'WORK_PHONE' => $user['work_phone'],
-                    'MANAGER' => '<a href="/company/personal/user/'.$user['manager']['id'].'/">'.$user['manager']['name'].'</a>',
+                    'MANAGER' => print_url($managerLink, $user['manager']['name']),
                     'SUBORDINATE_USERS_COUNT' => $user['subordinate_users_count'],
                     'WORK_STATUS' => $user['work_status']
 
