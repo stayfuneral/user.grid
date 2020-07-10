@@ -1,5 +1,7 @@
 <?php
 
+
+
 use Bitrix\Main\UI\PageNavigation;
 use Bitrix\Main\Grid\Options;
 use Bitrix\Main\Config\Option;
@@ -14,6 +16,7 @@ class UserListComponent extends CBitrixComponent {
 
     private $userList = 'user_list';
     private $modules = ['intranet', 'timeman', 'iblock', 'crm', 'bizproc'];
+    
 
     public function includeModules() {
         foreach($this->modules as $module) {
@@ -29,12 +32,19 @@ class UserListComponent extends CBitrixComponent {
             ],
             [
                 'id' => 'FULL_NAME',
-                'name' => 'ФИО',
+                'name' => 'ФИО...',
                 'type' => 'custom_entity',
                 'default' => true,
                 'params' => [
-                    'entity' => 'CRM'
+                    'type' => 'user'
                 ]
+
+            ],
+            [
+                'id' => 'DATE',
+                'name' => 'Дата',
+                'type' => 'date',
+                'default' => true
             ],
             [
                 'id' => 'WORK_POSITION',
@@ -178,10 +188,11 @@ class UserListComponent extends CBitrixComponent {
         $result = [];
 
         foreach($users as $id => $user) {
+            $userLink = '/company/personal/user/'.$user['id'].'/';
             $result[] = [
                 'data' => [
                     'ID' => $user['id'],
-                    'FULL_NAME' => '<a href="/company/personal/user/'.$user['id'].'/">'.$user['name'].'</a>',
+                    'FULL_NAME' => print_url($userLink, $user['name']),
                     'WORK_POSITION' => $user['work_position'],
                     'WORK_PHONE' => $user['work_phone'],
                     'MANAGER' => '<a href="/company/personal/user/'.$user['manager']['id'].'/">'.$user['manager']['name'].'</a>',
