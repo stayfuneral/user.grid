@@ -10,6 +10,9 @@ use Bitrix\Main\UserUtils;
 use Bitrix\Main\UserTable;
 use Bitrix\Intranet\UserAbsence;
 use Bitrix\Bizproc\Service\User;
+use Bitrix\Main\Localization\Loc;
+
+Loc::loadMessages(__FILE__);
 
 
 class UserListComponent extends CBitrixComponent {
@@ -32,7 +35,7 @@ class UserListComponent extends CBitrixComponent {
             ],
             [
                 'id' => 'FULL_NAME',
-                'name' => 'ФИО...',
+                'name' => Loc::getMessage('GRID_COLUMN_NAME'),
                 'type' => 'custom_entity',
                 'default' => true,
                 'params' => [
@@ -42,28 +45,28 @@ class UserListComponent extends CBitrixComponent {
             ],
             [
                 'id' => 'DATE',
-                'name' => 'Дата',
+                'name' => Loc::getMessage('GRID_COLUMN_DATE'),
                 'type' => 'date',
                 'default' => true
             ],
             [
                 'id' => 'WORK_POSITION',
-                'name' => 'Должность'
+                'name' => Loc::getMessage('GRID_COLUMN_POSITION')
             ],
             [
                 'id' => 'WORK_PHONE',
-                'name' => 'Рабочий телефон'
+                'name' => Loc::getMessage('GRID_COLUMN_PHONE')
             ],
             [
                 'id' => 'USER_STATUS',
-                'name' => 'Статус пользователя',
+                'name' => Loc::getMessage('GRID_COLUMN_STATUS'),
                 'type' => 'list',
                 'items' => [
-                    '' => 'Любой',
-                    'work' => 'работает',
-                    'not_work' => 'не работает',
-                    'vacation' => 'в отпуске',
-                    'absense' => 'отсутствует (иная причина)'
+                    '' => Loc::getMessage('GRID_COLUMN_STATUS_ANY'),
+                    'work' => Loc::getMessage('GRID_COLUMN_STATUS_WORK'),
+                    'not_work' => Loc::getMessage('GRID_COLUMN_STATUS_NOT_WORK'),
+                    'vacation' => Loc::getMessage('GRID_COLUMN_STATUS_VACATION'),
+                    'absense' => Loc::getMessage('GRID_COLUMN_STATUS_ABSENSE')
                 ],
                 'params' => [
                     'multiple' => 'Y'
@@ -85,12 +88,12 @@ class UserListComponent extends CBitrixComponent {
     public function setGridColumns() {
         return [
             ['id' => 'ID', 'name' => 'ID', 'sort' => 'ID', 'default' => true],
-            ['id' => 'FULL_NAME', 'name' => 'ФИО', 'sort' => 'FULL_NAME', 'default' => true],
-            ['id' => 'WORK_POSITION', 'name' => 'Должность', 'sort' => 'WORK_POSITION', 'default' => true],
-            ['id' => 'WORK_PHONE', 'name' => 'Рабочий телефон', 'sort' => 'WORK_PHONE', 'default' => true],
-            ['id' => 'MANAGER', 'name' => 'Руководитель', 'sort' => 'MANAGER', 'default' => true],
-            ['id' => 'SUBORDINATE_USERS_COUNT', 'name' => 'Количество подчинённых', 'sort' => 'SUBORDINATE_USERS_COUNT', 'default' => true],
-            ['id' => 'WORK_STATUS', 'name' => 'Статус пользователя', 'sort' => 'WORK_STATUS', 'default' => true],
+            ['id' => 'FULL_NAME', 'name' => Loc::getMessage('GRID_COLUMN_NAME'), 'sort' => 'FULL_NAME', 'default' => true],
+            ['id' => 'WORK_POSITION', 'name' => Loc::getMessage('GRID_COLUMN_POSITION'), 'sort' => 'WORK_POSITION', 'default' => true],
+            ['id' => 'WORK_PHONE', 'name' => Loc::getMessage('GRID_COLUMN_PHONE'), 'sort' => 'WORK_PHONE', 'default' => true],
+            ['id' => 'MANAGER', 'name' => Loc::getMessage('GRID_COLUMN_MANAGER'), 'sort' => 'MANAGER', 'default' => true],
+            ['id' => 'SUBORDINATE_USERS_COUNT', 'name' => Loc::getMessage('GRID_COLUMN_SUBORDINATES'), 'sort' => 'SUBORDINATE_USERS_COUNT', 'default' => true],
+            ['id' => 'WORK_STATUS', 'name' => Loc::getMessage('GRID_COLUMN_STATUS'), 'sort' => 'WORK_STATUS', 'default' => true],
         ];
     }
 
@@ -132,10 +135,12 @@ class UserListComponent extends CBitrixComponent {
             
             if(!empty($user['UF_DEPARTMENT'])) {
 
+                $workStatus = $user['ACTIVE'] === 'Y' ? Loc::getMessage('GRID_COLUMN_STATUS_WORK') : Loc::getMessage('GRID_COLUMN_STATUS_NOT_WORK');
+
                 $arUsers[$userId] = [
                     'id' => $userId,
                     'name' => $user['LAST_NAME'] . ' ' . $user['NAME'] . ' ' . $user['SECOND_NAME'] ?? '',
-                    'work_status' => $user['ACTIVE'] === 'Y' ? 'работает' : 'не работает',
+                    'work_status' => $workStatus,
                     'work_position' => $user['WORK_POSITION'],
                     'work_phone' => $user['WORK_PHONE'],         
                 ];
@@ -169,7 +174,7 @@ class UserListComponent extends CBitrixComponent {
                         foreach($abs as $offline) {
                             $ts = time();
                             if($ts  > $offline['DATE_FROM_TS'] && $ts < $offline['DATE_TO_TS']) {
-                                $arUsers[$userId]['work_status'] = ($offline['ENTRY_TYPE'] === 'VACATION') ? 'в отпуске' : 'отсутствует ('. $offline['ENTRY_TYPE_VALUE'] .')';
+                                $arUsers[$userId]['work_status'] = ($offline['ENTRY_TYPE'] === 'VACATION') ? Loc::getMessage('GRID_COLUMN_STATUS_VACATION') : Loc::getMessage('GRID_ABSENSE') . ' ('. $offline['ENTRY_TYPE_VALUE'] .')';
                             }
                         }
                     }
@@ -293,7 +298,7 @@ class UserListComponent extends CBitrixComponent {
         if(is_array($arSection)) {
             return (int)$arSection['IBLOCK_SECTION_ID'];
         } else {
-            throw new Exception("Result is empty");
+            throw new \Exception("Result is empty");
             
         }
     }
