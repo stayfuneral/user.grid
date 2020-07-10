@@ -1,9 +1,12 @@
 <?php
 
+use Bitrix\main\Localization\Loc;
+
+Loc::loadMessages(__FILE__);
+
 $arComponentDescription = [
-    'NAME' => 'Test Grid Component',
-    'DESCRIPTION' => 'test grid component',
+    'NAME' => Loc::getMessage('USER_GRID_COMPONENT_NAME'),
     'PATH' => [
-        'ID' => 'Test Grid Component',
+        'ID' => Loc::getMessage('USER_GRID_COMPONENT_NAME')
     ]
 ];
